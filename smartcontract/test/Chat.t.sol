@@ -2,11 +2,11 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {NameService} from "../src/NameService.sol";
+import {Chat} from "../src/Chat.sol";
 
 import {LibChatErrors, LibChatEvents} from "../src/libraries/LibChat.sol";
 
-contract NameServiceTest is Test {
+contract ChatTest is Test {
     Chat chatContract;
 
     address A = address(0xa);
@@ -14,7 +14,7 @@ contract NameServiceTest is Test {
     address C = address(0xc);
 
     function setUp() public {
-        nameServiceContract = new NameService();
+        chatContract = new Chat();
 
         A = mkaddr("user A");
         B = mkaddr("user B");
