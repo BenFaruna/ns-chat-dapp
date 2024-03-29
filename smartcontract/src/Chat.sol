@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./interfaces/INameService.sol";
+
 contract Chat {
     uint256 chatId = 1;
     struct Message {
@@ -13,31 +15,49 @@ contract Chat {
 
     mapping(uint256 => Message[]) chatSession;
 
+    address public nameServiceAddress;
+
     event MessageSent(
         address indexed sender,
         address indexed receiver,
         uint256 timestamp
     );
 
-    function sendMessage(address _receiver, string memory _content) external {
-        uint256 _chatSession = chatCheck(msg.sender, _receiver);
+    constructor(address _nameService) {
+        nameServiceAddress = _nameService;
+    }
+
+    function sendMessage(
+        string memory _receiver,
+        string memory _content
+    ) external {
+        INameService nameService = INameService(nameServiceAddress);
+
+        (, , address _receiverAddr) = nameService.getDomainDetails(_receiver);
+
+        uint256 _chatSession = chatCheck(msg.sender, _receiverAddr);
         if (_chatSession == 0) {
             _chatSession = chatId;
-            messages[msg.sender][_receiver] = _chatSession;
+            messages[msg.sender][_receiverAddr] = _chatSession;
             chatId++;
         }
 
-        Message memory _message = Message(msg.sender, _receiver, _content);
+        Message memory _message = Message(msg.sender, _receiverAddr, _content);
         chatSession[_chatSession].push(_message);
 
-        emit MessageSent(msg.sender, _receiver, block.timestamp);
+        emit MessageSent(msg.sender, _receiverAddr, block.timestamp);
     }
 
     function getMessages(
-        address _sender,
-        address _receiver
+        string memory _sender,
+        string memory _receiver
     ) external view returns (Message[] memory) {
-        uint256 _chatSession = chatCheck(_sender, _receiver);
+        INameService nameService = INameService(nameServiceAddress);
+
+        (, , address _senderAddr) = nameService.getDomainDetails(_sender);
+        (, , address _receiverAddr) = nameService.getDomainDetails(_receiver);
+
+        uint256 _chatSession = chatCheck(_senderAddr, _receiverAddr);
         return chatSession[_chatSession];
     }
 

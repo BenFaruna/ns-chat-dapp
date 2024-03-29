@@ -13,12 +13,12 @@ contract DeployScript is Script {
     function setUp() public {}
 
     function run() public {
-        uint256 pK = vm.envUint("PK");
+        uint256 pK = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(pK);
 
         // Deploy contract
         nameSC = new NameService();
-        chatSC = new Chat();
+        chatSC = new Chat(address(nameSC));
 
         console2.log("NameService: ", address(nameSC));
         console2.log("Chat: ", address(chatSC));

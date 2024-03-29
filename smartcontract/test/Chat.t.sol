@@ -3,10 +3,12 @@ pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {Chat} from "../src/Chat.sol";
+import {NameService} from "../src/NameService.sol";
 
 import {LibChatErrors, LibChatEvents} from "../src/libraries/LibChat.sol";
 
 contract ChatTest is Test {
+    NameService nameServiceContract;
     Chat chatContract;
 
     address A = address(0xa);
@@ -14,11 +16,42 @@ contract ChatTest is Test {
     address C = address(0xc);
 
     function setUp() public {
-        chatContract = new Chat();
+        nameServiceContract = new NameService();
+        chatContract = new Chat(address(nameServiceContract));
 
         A = mkaddr("user A");
         B = mkaddr("user B");
         C = mkaddr("user C");
+
+        switchSigner(A);
+        nameServiceContract.registerNameService("A.ns", "awiijjj");
+
+        switchSigner(B);
+        nameServiceContract.registerNameService("B.ns", "bwiijjj");
+
+        switchSigner(C);
+        nameServiceContract.registerNameService("C.ns", "cwiijjj");
+    }
+
+    function testSendMessage() public {
+        switchSigner(A);
+        chatContract.sendMessage("B.ns", "Hello B");
+
+        switchSigner(B);
+        chatContract.sendMessage("A.ns", "Hello A");
+
+        Chat.Message[] memory _message = chatContract.getMessages(
+            "A.ns",
+            "B.ns"
+        );
+
+        Chat.Message[] memory _message2 = chatContract.getMessages(
+            "B.ns",
+            "A.ns"
+        );
+
+        assert(_message.length == 2);
+        assert(_message2.length == 2);
     }
 
     function switchSigner(address _newSigner) public {

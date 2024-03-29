@@ -11,7 +11,7 @@ contract NameService {
     }
 
     mapping(string => address) public nameToAddress;
-    mapping(string => DomainDetails) public domains;
+    mapping(address => DomainDetails) public domains;
 
     function getDomainDetails(
         string memory _domainName
@@ -20,10 +20,12 @@ contract NameService {
             revert LibNSErrors.DomainNotRegistered();
         }
 
+        address _domainAddress = nameToAddress[_domainName];
+
         return (
-            domains[_domainName].domainName,
-            domains[_domainName].avatarURI,
-            domains[_domainName].owner
+            domains[_domainAddress].domainName,
+            domains[_domainAddress].avatarURI,
+            domains[_domainAddress].owner
         );
     }
 
@@ -35,7 +37,7 @@ contract NameService {
             revert LibNSErrors.NameAlreadyTaken();
         }
         nameToAddress[_domainName] = msg.sender;
-        domains[_domainName] = DomainDetails(
+        domains[msg.sender] = DomainDetails(
             _domainName,
             _avatarURI,
             msg.sender
@@ -55,7 +57,7 @@ contract NameService {
             revert LibNSErrors.NotDomainOwner();
         }
 
-        domains[_domainName].avatarURI = _avatarURI;
+        domains[msg.sender].avatarURI = _avatarURI;
         emit LibNSEvents.AvatarUpdated(msg.sender, _domainName);
     }
 }
