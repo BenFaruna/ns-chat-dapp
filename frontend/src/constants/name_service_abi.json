@@ -55,9 +55,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "address",
                 "name": "",
-                "type": "string"
+                "type": "address"
             }
         ],
         "name": "domains",
