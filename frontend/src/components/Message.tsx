@@ -25,23 +25,7 @@ const Message = () => {
     return (
         <>
             <Text as="div" weight="bold" className="text-xl">Chat with {domainName}</Text>
-            <Flex justify={"between"} align={"center"}>
-                <Box minWidth={"85%"} className="m-2">
-                    <TextArea placeholder="Send message..."
-                        size={"2"}
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                    />
-                </Box>
-                <Button
-                    size={"3"}
-                    className="self-center"
-                    onClick={async () => {
-                        await handleSendMessage(domainName ?? '', messageText)
-                        setMessageText("")
-                    }}
-                >Send</Button>
-            </Flex>
+
             {messages.map((message, index) => {
                 return (< Box width="800px" key={index}>
                     <Card size="2">
@@ -61,6 +45,23 @@ const Message = () => {
                     </Card>
                 </Box >)
             })}
+            <Flex justify={"between"} align={"center"}>
+                <Box minWidth={"85%"} className="m-2">
+                    <TextArea placeholder="Send message..."
+                        size={"2"}
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                    />
+                </Box>
+                <Button
+                    size={"3"}
+                    className="self-center"
+                    onClick={async () => {
+                        await handleSendMessage(domainName ?? '', messageText)
+                        setMessageText("")
+                    }}
+                >Send</Button>
+            </Flex>
         </>
     )
 }
