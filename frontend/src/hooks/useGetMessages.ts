@@ -18,13 +18,19 @@ const useGetMessages = () => {
             const senderName = await nameService.domains(address);
             setSender(senderName[0]);
 
+
+            if (sender === "") return;
             const history = await chat.getMessages(sender, domainName)
 
-            console.log("History", history);
+            setMessages(history);
         })()
-    }, [domainName])
+    }, [address, sender])
 
-    return messages
+    return {
+        sender,
+        messages,
+        receiver: domainName,
+    }
 }
 
 export default useGetMessages
