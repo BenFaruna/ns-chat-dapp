@@ -11,7 +11,7 @@ import '@radix-ui/themes/styles.css';
 
 import { Theme } from "@radix-ui/themes";
 
-import Root from './routes/Root';
+import App from './App';
 import ErrorPage from './ErrorPage';
 import NameService from './routes/NameService';
 import Chat from './routes/Chat';
@@ -24,7 +24,7 @@ configureWeb3Modal()
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
